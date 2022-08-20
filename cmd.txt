@@ -1,0 +1,2 @@
+g++ widgetTest.cpp `wx-config --cxxflags --libs` -o widgetTest
+`wx-config --cxx --cxxflags` -o myapp *.cpp `wx-config --libs`

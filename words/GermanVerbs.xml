@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+    
+    <Word base="joggen">
+        <Ich>jogge</Ich>
+        <Wir>joggen</Wir>
+        <Du>joggst</Du>
+        <Ihr>joggt</Ihr>
+        <Er>joggt</Er>
+        <SieThey>joggen</SieThey>
+        <Sie>joggt</Sie>
+        <SieFormal>joggen</SieFormal>
+        <Es>joggt</Es>
+    </Word>
+
+</Root>
