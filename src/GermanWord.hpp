@@ -3,13 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <iterator>
 
 class GermanWord {
     public:
-        GermanWord(std::string FormsFromXml[]);
-        ~GermanWord();
+        GermanWord(std::vector<wxString>);
         //return list of correct words
-        std::string[10] returnCorrectForms(); 
+        std::vector<std::string> returnCorrectForms(); 
         //return list of incorrect words
         std::vector<std::string> returnIncorrectForms(std::string InputForms[]);
         //return bool if correct

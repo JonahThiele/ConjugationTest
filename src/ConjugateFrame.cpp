@@ -15,8 +15,7 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
         m_pTimer = new wxTimer(this, wxEVT_TIMER);
         m_pTimer->Start(1000);
 
-        //set up xml stuff
-        m_pXmlHandle = new XmlHandler()
+        
 
 
         m_pBoxSizer = new wxBoxSizer( wxVERTICAL );
@@ -197,9 +196,12 @@ void ConjugateFrame::OnMenuFileOpen(wxCommandEvent &event)
     if ( OpenDialog->ShowModal() == wxID_OK )
     {
         //set up xml stuff
-        m_pXmlHandle = new XmlHandler(OpenDialog->GetPath());
-        //grab first german word
-        m_pGermanWord firstWord = m_pXmlHandle->getNextWord();
+        //convert from wxstring to std::string
+        //std::string filepath = std::string(OpenDialog->GetPath().mb_str());
+        //conversion issue between wxstring and std::string
+        m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(OpenDialog->GetPath()));
+        //grab first german word pass true bc its the first word
+        m_pGermanWord = std::make_unique<GermanWord>(*m_pXmlHandle->getNextWord(true));
 
     }
     OpenDialog->Close();
@@ -240,8 +242,8 @@ void ConjugateFrame::OnTimer(wxTimerEvent &event)
         seconds--;
         std::string formatStr = (seconds % 60 > 9) ? ":" : ":0";
         std::string str =  "               " + std::to_string(seconds / 60) + formatStr + std::to_string(seconds % 60);
-        wxString time;
-        time << str;
+        wxString time(str);
+        //time << str;
         m_pTimerText->SetLabel(time);
     }
 
@@ -254,22 +256,23 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         //set all of the inputboxes back to black
         for(int i =0; i < 10; i++)
         {
-            inputBoxList[i]->SetForegroundColour(*wxBlack);
+            inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxBLACK));
             inputBoxList[i]->Clear();
         }
         //set the submit button back;
         m_pSubmitButton->SetLabel(wxT("Submit"));
-        //get next word
-        m_pGermanWord firstWord = m_pXmlHandle->getNextWord();
+        //get next word pass false bc its not the first word
+        //figure out how to change copy or change the unique pointer over to something else
+        m_pGermanWord = m_pXmlHandle->getNextWord(false);
 
 
     } else{
         std::string formattedEntryList[9];
         for(int i = 0; i < 10; i++)
         {
-            std::string str;
+          
             wxString wxstr = inputBoxList[i]->GetValue();
-            str << wxstr;
+            std::string str = std::string(wxstr.mb_str());
             formattedEntryList[i] = str;
 
         }
@@ -288,13 +291,19 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
                     if(formattedEntryList[i] == incorrectForms[a])
                     {
                         //show the incorrect word in red next to the correct form in green
-                        inputBoxList[i]->SetForegroundColour(*wxRED);
+                        inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxRED));
                         inputBoxList[i]->Clear();
-                        inputBoxList[i] << formattedEntryList[i];
-                        inputBoxList[i]->SetForegroundColour(*wxBlack);
-                        inputBoxList[i] << ":" 
-                        inputBoxList[i]->SetForegroundColour(*wxGreen);
-                        inputBoxList[i] << m_pGermanWord->returnCorrectForms()[i];
+
+                        std::string userForm = formattedEntryList[i];
+
+                        *inputBoxList[i] << userForm.c_str();
+                        inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxBLACK));
+                        std::string seperator = ":";
+                        *inputBoxList[i] << ":"; 
+                        inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxGREEN));
+
+                        std::string correctForm = m_pGermanWord->returnCorrectForms()[i];
+                        *inputBoxList[i] << correctForm.c_str();
                     }
                 }
             }

@@ -3,14 +3,14 @@
 
 #include <wx/xml/xml.h>
 #include "GermanWord.hpp"
+#include <memory>
 
 class XmlHandler {
     public:
         XmlHandler(wxString filename);
-        ~XmlHandler();
 
         //return next word
-        GermanWord getNextWord();
+        std::unique_ptr<GermanWord> getNextWord(bool);
        
     private:
         wxXmlDocument * p_mXmlDoc;
@@ -19,7 +19,7 @@ class XmlHandler {
         wxXmlNode * p_mXmlCurrentNode;
 
         //recursive wrapper to navigate xml
-        std::vector<wxString> TraverseWord(wxXmlNode*);
+        std::vector<wxString> TraverseWord(wxXmlNode*, std::vector<wxString>);
 
 
 };

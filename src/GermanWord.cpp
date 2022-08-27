@@ -1,20 +1,31 @@
+#include "wx/wxprec.h"
+
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
+#endif
+
 #include "GermanWord.hpp"
 
-GermanWord::GermanWord(std::string FormsFromXml[]) 
+GermanWord::GermanWord(std::vector<wxString> FormsFromXml) 
 {
-    baseForm = FormsFromXml[0];
-    ichForm = FormsFromXml[1];
-    wirForm = FormsFromXml[2];
-    duForm = FormsFromXml[3];
-    ihrForm = FormsFromXml[4];
-    erForm = FormsFromXml[5];
-    sieTheyForm = FormsFromXml[6];
-    sieForm = FormsFromXml[7];
-    sieFormalForm = FormsFromXml[8];
-    esForm = FormsFromXml[9];
+    //maybe write an assert if vector can't fill all of the forms, needs 10 spaces
+    baseForm = FormsFromXml[0].ToStdString();
+    ichForm = FormsFromXml[1].ToStdString();
+    wirForm = FormsFromXml[2].ToStdString();
+    duForm = FormsFromXml[3].ToStdString();
+    ihrForm = FormsFromXml[4].ToStdString();
+    erForm = FormsFromXml[5].ToStdString();
+    sieTheyForm = FormsFromXml[6].ToStdString();
+    sieForm = FormsFromXml[7].ToStdString();
+    sieFormalForm = FormsFromXml[8].ToStdString();
+    esForm = FormsFromXml[9].ToStdString();
 
     //add to check list to make it simple to check
-    std::string temparray[] = {baseForm, wirForm, duForm, ihrForm, erForm, sieTheyForm, sieForm, sieFormalForm, esForm};
+    std::string temparray[10];
+    for(int i =0; i < 10; i++)
+    {
+        temparray[i] = FormsFromXml[i];
+    }
     std::copy(temparray, temparray + 10, checkList);
 
 }
@@ -25,7 +36,9 @@ bool GermanWord::checkIfAllInputCorrect(std::string inputList[])
     {
         if(inputList[i] != checkList[i])
             return false;
-    }  
+    }
+
+    return true;  
 
 }
 
@@ -41,7 +54,8 @@ std::vector<std::string> GermanWord::returnIncorrectForms(std::string inputList[
     return incorrectList;
 }
 
-std::string[10] GermanWord::returnCorrectForms()
+std::vector<std::string> GermanWord::returnCorrectForms()
 {
-    return checkList;
+    std::vector<std::string> internalForms(std::begin(checkList), std::end(checkList));
+    return internalForms;
 }

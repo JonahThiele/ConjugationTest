@@ -4,6 +4,7 @@
 
 #include "XmlHandler.hpp"
 #include <vector>
+#include <ostream>
 #include <wx/timer.h>
 #include <memory>
 
