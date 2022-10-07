@@ -3,6 +3,7 @@
 
 
 #include "XmlHandler.hpp"
+#include "ResultsFrame.hpp"
 #include <vector>
 #include <ostream>
 #include <wx/timer.h>
@@ -42,7 +43,7 @@ class ConjugateFrame : public wxFrame
         std::unique_ptr<GermanWord> m_pGermanWord;
 
         //finished GermanWords 
-        std::vector<*GermanWord> praticedWords;
+        std::vector<GermanWord*> praticedWords;
 
         //timer control
         wxTimer *m_pTimer;
@@ -58,6 +59,17 @@ class ConjugateFrame : public wxFrame
         wxButton *m_pSubmitButton;
         bool goNext = false;
         bool results = false;
+
+        wxTextCtrl *m_pBaseWordCtrl;
+        wxTextCtrl *m_pIchCtrl;
+        wxTextCtrl *m_pWirCtrl;
+        wxTextCtrl *m_pDuCtrl;
+        wxTextCtrl *m_pIhrCtrl;
+        wxTextCtrl *m_pErCtrl;
+        wxTextCtrl *m_pSieTheyCtrl;
+        wxTextCtrl *m_pSieHerCtrl;
+        wxTextCtrl *m_pSieFormalCtrl;
+        wxTextCtrl *m_pEsCtrl;
 
         //std::vector<std::string> inputBoxCaptions = { "Ich", "Wir", "Du", "Ihr", "Er", "Sie", "Sie", "Sie(Formal)", "Es"};
 

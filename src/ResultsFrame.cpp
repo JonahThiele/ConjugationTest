@@ -6,27 +6,27 @@
 
 #include "ResultsFrame.hpp"
 
-ResultsFrame::ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<*GermanWord> words)
+ResultsFrame::ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<GermanWord*> words)
     : wxFrame((wxFrame *) NULL, -1, title, wxPoint(xpos, ypos), wxSize(width, height), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
     {
+        finishedWords = words;
+
         m_pBoxSizer = new wxBoxSizer( wxVERTICAL );
 
-        for(auto word : words)
+        for(int i = 0; i < words.size(); i++)
         {
-            *m_pWordButton = new wxButton(this, wxID_ANY, wxT(word->returnNameBaseForm()));
+            wxButton *m_pWordButton = new wxButton(this, wxID_ANY, words[i]->returnNameBaseForm());
             ResultWordList.push_back(m_pWordButton);
-        }
 
-        for(auto word : ResultWordList)
-        {
             m_pBoxSizer->Add(
-            word,
+            m_pWordButton,
             wxSizerFlags().Align(0).Shaped().Center()
             );
 
             //connect to handlers
             
-            word->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ResultsFrame::OnButtonClick, *wxButton word), NULL, this);
+            //word->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ResultsFrame::OnButtonClick), NULL, this);
+            m_pWordButton->Bind(wxEVT_BUTTON, &ResultsFrame::OnButtonClick, this, i + buttonOffset);
         }
 
         SetSizerAndFit(m_pBoxSizer);
@@ -34,18 +34,20 @@ ResultsFrame::ResultsFrame(const wxChar *title, int xpos, int ypos, int width, i
     }
     // figure out what you need to do to get dynamic binding 
 
-ResultsFrame::OnButtonClick(wxCommandEvent &event, *wxButton word)
+void ResultsFrame::OnButtonClick(wxCommandEvent &event)
 {
-    std::string wordName = word->GetLabel().ToStdString();
-    for(auto germanword : words)
+    for(int i = 0; i < finishedWords.size(); i++)
     {
-        if(germanword->returnNameBaseForm() == wordName)
+        if(event.GetId() == buttonOffset + i)
         {
-            // open new window that shows the incorrect words
+            // open new window that shows the incorrect forms
+            IncorWordFrame *incorWordFrame = new IncorWordFrame(finishedWords[i]->returnNameBaseForm(), 100, 100, 400, 300, finishedWords[i]);
+            incorWordFrame->Show(true);
+            incorWordFrame->Raise();
+            incorWordFrame->SetFocus();
+            //hide conjugate frame
+            this->Show(false);
         }
     }
     
 }
-
-
-

@@ -72,13 +72,12 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
             return Word_ptr;
 
         }
-        else {
+
+
+
+    } else {
             //if there is no other branch return
             return std::unique_ptr<GermanWord>(nullptr);
-        }
-
-
-
     }
     
 

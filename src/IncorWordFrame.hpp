@@ -7,16 +7,16 @@
 class IncorWordFrame : public wxFrame
 {
     public:
-        ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, *GermanWord germanWord);
+        IncorWordFrame(const wxChar *title, int xpos, int ypos, int width, int height, GermanWord *germanWord);
 
-        ~ResultsFrame(){};
+        ~IncorWordFrame(){};
     protected:
 
         //wxDECLARE_EVENT_TABLE();
         
     private:
 
-        void OnBackClick(wxCommandEvent &event);
+        void OnBackClick(wxCommandEvent &event, wxButton *word);
 
         wxBoxSizer *m_pBoxSizer;
         wxFlexGridSizer *m_pFlexGridSizer;
@@ -29,9 +29,6 @@ class IncorWordFrame : public wxFrame
 
         wxString formList[10];
 
-    
-    protected:
-            DECLARE_EVENT_TABLE();
 };
 
 #endif 

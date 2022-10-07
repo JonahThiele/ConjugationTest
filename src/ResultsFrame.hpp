@@ -3,11 +3,12 @@
 
 #include <vector>
 #include "GermanWord.hpp"
+#include "IncorWordFrame.hpp"
 
 class ResultsFrame : public wxFrame
 {
     public:
-        ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<*GermanWord> words);
+        ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<GermanWord*> words);
 
         ~ResultsFrame(){};
     protected:
@@ -24,14 +25,16 @@ class ResultsFrame : public wxFrame
         //end and return button 
         wxButton *m_pEndReturnButton;
     
-        std::vector<WxButton*> ResultWordList;
+        std::vector<wxButton*> ResultWordList;
 
+        std::vector<GermanWord*> finishedWords;
+
+        const int buttonOffset = 45;
         /*wxMenuBar *m_pMenuBar;
         wxMenu *m_pFileMenu;
         wxMenu *m_pHelpMenu;
         */
-    protected:
-            DECLARE_EVENT_TABLE();
+   
 };
 
 #endif 

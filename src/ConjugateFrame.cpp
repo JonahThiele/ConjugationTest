@@ -285,26 +285,28 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         //set all of the inputboxes back to black
         for(int i =0; i < 10; i++)
         {
-            inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxBlack));
+            inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxBLACK));
             inputBoxList[i]->Clear();
         }
         //set the submit button back;
         m_pSubmitButton->SetLabel(wxT("Submit"));
         //get next word pass false bc its not the first word
         //figure out how to change copy or change the unique pointer over to something else
-        praticedWords.push_back(m_pGermanWord);
+        praticedWords.push_back(m_pGermanWord.release());
         m_pGermanWord = m_pXmlHandle->getNextWord(false); 
 
 
     } else if(results)
     {
         // call results page
-        ConjugateFrame *resultsFrame = new ResultsFrame( wxT("Results Page"), 100, 100, 400, 300, );
-        resultsFrame->Show(TRUE);
-        SetTopWindow(resultsFrame);
+        ResultsFrame *resultsFrame = new ResultsFrame( wxT("Results Page"), 100, 100, 400, 300, praticedWords);
+        resultsFrame->Show(true);
+        resultsFrame->Raise();
+        resultsFrame->SetFocus();
+  
 
         //hide conjugate frame
-        this->Show(False);
+        this->Show(false);
 
     } else{
         std::string formattedEntryList[10];
@@ -314,7 +316,7 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
            //std::cout << "str9:" << str9 << "\n";
           
             wxString wxstr = inputBoxList[i]->GetValue();
-            formattedEntryList[i] = str;
+            formattedEntryList[i] = wxstr.ToStdString();
 
         }
 

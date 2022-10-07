@@ -6,13 +6,19 @@
 
 #include "IncorWordFrame.hpp"
 
-IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<*GermanWord> words)
+IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int width, int height, GermanWord *word)
     : wxFrame((wxFrame *) NULL, -1, title, wxPoint(xpos, ypos), wxSize(width, height), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
     {
         m_pBoxSizer = new wxBoxSizer( wxVERTICAL );
         m_pFlexGridSizer = new wxFlexGridSizer(2);
 
-        formList = m_pGermanWord->returnAllForms();
+        wxString* firstForm= m_pGermanWord->returnAllForms();
+        for(int i = 0; i < 10; i++)
+        {
+            formList[i] = *(firstForm + i);
+        }
+
+
         wxString BaseForm("Base Word:");
         wxString BaseLabel = BaseForm + formList[0];
 
@@ -21,7 +27,6 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
         wxString IchForm("Ich Form:");
         wxString IchLabel = IchForm + formList[1];
 
@@ -30,7 +35,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
+ 
         wxString WirForm("Wir Form:");
         wxString WirLabel = WirForm + formList[2];
 
@@ -39,7 +44,6 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
         wxString DuForm("Du Form:");
         wxString DuLabel = DuForm + formList[3];
 
@@ -48,7 +52,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
+
         wxString IhrForm("Ihr Form:");
         wxString IhrLabel = IhrForm + formList[4];
 
@@ -57,7 +61,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
+
         wxString ErForm("Er Form:");
         wxString ErLabel = ErForm + formList[5];
 
@@ -66,7 +70,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
+
         wxString SieTheyForm("Sie Form:");
         wxString SieTheyFormLabel = SieTheyForm + formList[6];
 
@@ -75,7 +79,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
+
         wxString SieHerForm("Sie Form:");
         wxString SieHerLabel = SieHerForm + formList[7];
 
@@ -84,7 +88,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
+        
         wxString SieFormalForm("Sie Form:");
         wxString SieFormalLabel = SieFormalLabel + formList[8];
 
@@ -93,7 +97,6 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
-        formList = m_pGermanWord->returnAllForms();
         wxString EsForm("Es Form:");
         wxString EsLabel = EsForm + formList[9];
 
@@ -119,7 +122,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
     
     }
 
-ResultsFrame::OnBackClick(wxCommandEvent &event, *wxButton word)
+void IncorWordFrame::OnBackClick(wxCommandEvent &event, wxButton *word)
 {
     // jump back to results window
     
