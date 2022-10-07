@@ -13,6 +13,13 @@ class ConjugateFrame : public wxFrame
     public:
         ConjugateFrame(const wxChar *title, int xpos, int ypos, int width, int height);
 
+        ~ConjugateFrame(){};
+    protected:
+
+        //wxDECLARE_EVENT_TABLE();
+        
+    private:
+
         /** Processes menu File|Open */
         void OnMenuFileOpen(wxCommandEvent &event);
         /** Processes menu File|Save */
@@ -26,21 +33,16 @@ class ConjugateFrame : public wxFrame
         /** Times exercise */
         void OnTimer(wxTimerEvent &event);
 
-        
-
-        ~ConjugateFrame();
-    protected:
-
-        DECLARE_EVENT_TABLE()
-        
-    private:
+        //wxDECLARE_EVENT_TABLE();
     
-
         //xml control 
         std::unique_ptr<XmlHandler> m_pXmlHandle;
 
         //german word control 
         std::unique_ptr<GermanWord> m_pGermanWord;
+
+        //finished GermanWords 
+        std::vector<*GermanWord> praticedWords;
 
         //timer control
         wxTimer *m_pTimer;
@@ -52,30 +54,21 @@ class ConjugateFrame : public wxFrame
         wxBoxSizer *m_pBoxSizer;
         wxPanel *m_pPanel;
 
-        // get txtctrl data back to check if input is correct
-        wxTextCtrl *m_pIchCtrl;
-        wxTextCtrl *m_pDuCtrl;
-        wxTextCtrl *m_pErCtrl;
-        wxTextCtrl *m_pSieHerCtrl;
-        wxTextCtrl *m_pEsCtrl;
-        wxTextCtrl *m_pWirCtrl;
-        wxTextCtrl *m_pIhrCtrl;
-        wxTextCtrl *m_pSieTheyCtrl;
-        wxTextCtrl *m_pSieFormalCtrl;
-        wxTextCtrl *m_pBaseWordCtrl;
-
         //submit button 
         wxButton *m_pSubmitButton;
         bool goNext = false;
+        bool results = false;
 
         //std::vector<std::string> inputBoxCaptions = { "Ich", "Wir", "Du", "Ihr", "Er", "Sie", "Sie", "Sie(Formal)", "Es"};
 
-        std::vector<wxTextCtrl*> inputBoxList= { m_pIchCtrl, m_pDuCtrl, m_pErCtrl, m_pSieHerCtrl, m_pEsCtrl,
-                                     m_pWirCtrl, m_pIhrCtrl, m_pSieTheyCtrl, m_pSieFormalCtrl};
+        std::vector<wxTextCtrl*> inputBoxList= { m_pBaseWordCtrl, m_pIchCtrl, m_pWirCtrl, m_pDuCtrl, m_pIhrCtrl, m_pErCtrl, 
+                                                 m_pSieTheyCtrl, m_pSieHerCtrl, m_pSieFormalCtrl, m_pEsCtrl};
 
         wxMenuBar *m_pMenuBar;
         wxMenu *m_pFileMenu;
         wxMenu *m_pHelpMenu;
+    protected:
+            DECLARE_EVENT_TABLE();
 };
 
 #endif //_TEXTFRAME_H

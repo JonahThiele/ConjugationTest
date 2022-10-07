@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root>
     
-    <Word base="joggen">
+    <Word>
+        <Base>joggen</Base>
         <Ich>jogge</Ich>
         <Wir>joggen</Wir>
         <Du>joggst</Du>
@@ -11,6 +12,30 @@
         <Sie>joggt</Sie>
         <SieFormal>joggen</SieFormal>
         <Es>joggt</Es>
+    </Word>
+    <Word>
+        <Base>haben</Base>
+        <Ich>habe</Ich>
+        <Wir>haben</Wir>
+        <Du>hast</Du>
+        <Ihr>habt</Ihr>
+        <Er>hat</Er>
+        <SieThey>haben</SieThey>
+        <Sie>hat</Sie>
+        <SieFormal>haben</SieFormal>
+        <Es>hat</Es>
+    </Word>
+    <Word>
+        <Base>sein</Base>
+        <Ich>bin</Ich>
+        <Wir>sind</Wir>
+        <Du>bist</Du>
+        <Ihr>seid</Ihr>
+        <Er>ist</Er>
+        <SieThey>sind</SieThey>
+        <Sie>ist</Sie>
+        <SieFormal>sind</SieFormal>
+        <Es>ist</Es>
     </Word>
 
 </Root>

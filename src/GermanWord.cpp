@@ -9,6 +9,10 @@
 GermanWord::GermanWord(std::vector<wxString> FormsFromXml) 
 {
     //maybe write an assert if vector can't fill all of the forms, needs 10 spaces
+    for (wxString i: FormsFromXml)
+        std::cout << i.ToStdString() << ',';
+    std::cout << '\n';
+
     baseForm = FormsFromXml[0].ToStdString();
     ichForm = FormsFromXml[1].ToStdString();
     wirForm = FormsFromXml[2].ToStdString();
@@ -52,6 +56,19 @@ std::vector<std::string> GermanWord::returnIncorrectForms(std::string inputList[
         }
     }
     return incorrectList;
+}
+
+std::vector<std::string> GermanWord::returnCorrectForms(std::string inputList[])
+{
+    std::vector<std::string> incorrectList;
+    for(int i = 0; i < 10; i++)
+    {
+        if(inputList[i] == checkList[i]){
+            incorrectList.push_back(inputList[i]);
+        }
+    }
+    return incorrectList;
+
 }
 
 std::vector<std::string> GermanWord::returnCorrectForms()

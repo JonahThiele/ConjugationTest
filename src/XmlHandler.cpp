@@ -18,19 +18,23 @@ XmlHandler::XmlHandler(wxString filename)
 
 std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
 {
-    std::vector<wxString> wordForms;
-    wxString constructorList[10];
+    // empty for easy index
+    std::vector<wxString> wordForms = {wxString("0"), wxString("0"), wxString("0"),
+                                      wxString("0"), wxString("0"), wxString("0"),
+                                      wxString("0"), wxString("0"), wxString("0"),
+                                      wxString("0")};
+    //wxString constructorList[10];
 
     if(FirstWord)
     {
         // do I need to handle these pointers or will wx widgets take care of it for me?
         p_mXmlCurrentNode = p_mXmlRoot->GetChildren();
         //grab the first base word string
-        wxString baseString = p_mXmlCurrentNode->GetChildren()->GetContent();
+        wxString baseString = p_mXmlCurrentNode->GetChildren()->GetNodeContent();
+        std::cout << "Bstr:" << baseString.ToStdString() << "\n";
         //add to forms to work with the loop
-        wordForms.push_back(baseString);
-
-        wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren()->GetNext(), wordForms);
+        wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
+        wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren(), wordForms);
 
         //add to constructor list
         /*for(int i = 0; i < 10; i++)
@@ -44,15 +48,16 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
 
         return Word_ptr;
 
-    } else {
+    } else if(p_mXmlRoot->GetNext() != NULL) {
         // grab the first node
         p_mXmlCurrentNode = p_mXmlRoot->GetNext();
-        if(p_mXmlCurrentNode == NULL) 
+        if(p_mXmlCurrentNode->GetNext() == NULL) 
         {
             return NULL;
         }else {
             //grab the first base word string
-            wxString baseString = p_mXmlCurrentNode->GetChildren()->GetContent();
+            wxString baseString = p_mXmlCurrentNode->GetChildren()->GetNodeContent();
+            wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
             wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren()->GetNext(), wordForms);
 
             /*for(int i = 0; i < 10; i++)
@@ -67,6 +72,10 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
             return Word_ptr;
 
         }
+        else {
+            //if there is no other branch return
+            return std::unique_ptr<GermanWord>(nullptr);
+        }
 
 
 
@@ -74,20 +83,71 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
     
 
 }
+// how to write a solution that handles empty word forms?
 
 //recurses through xml and grabs forms
-std::vector<wxString> XmlHandler::TraverseWord(wxXmlNode* node, std::vector<wxString> formsList)
+std::vector<wxString> XmlHandler::TraverseWord(wxXmlNode* node, std::vector<wxString>& formsList)
 {
-    if(node != NULL)
+    if(node->GetNext() != NULL)
     {
-        formsList.push_back(node->GetNext()->GetContent());
+        formsList[this->indexXml(node->GetNext()->GetName())] = node->GetNext()->GetNodeContent();
+        std::cout << "Forms:" << node->GetNext()->GetNodeContent().ToStdString() << "\n";
+
         //dont know if I can initilaize an array like this
         formsList = TraverseWord(node->GetNext(), formsList);
-    }else {
-        return formsList;
     }
-    // if the function fails return a pseudo NULL value
+
+    return formsList;
+    
+    /*// if the function fails return a pseudo NULL value
     wxString str("NULL");
     std::vector<wxString> returnFail = {str};
     return returnFail;
+    */
+}
+
+int XmlHandler::indexXml(wxString name)
+{
+    if(name.IsSameAs(wxT("Base")))
+    {
+        return 0;
+
+    } else if(name.IsSameAs(wxT("Ich")))
+    {
+        return 1;
+
+    }else if(name.IsSameAs(wxT("Wir")))
+    {
+        return 2;
+
+    }else if(name.IsSameAs(wxT("Du")))
+    {
+        return 3;
+
+    }else if(name.IsSameAs(wxT("Ihr")))
+    {
+        return 4;
+
+    }else if(name.IsSameAs(wxT("Er")))
+    {
+        return 5;
+
+    }else if(name.IsSameAs(wxT("SieThey")))
+    {
+        return 6;
+
+    }else if(name.IsSameAs(wxT("Sie")))
+    {
+        return 7;
+
+    }else if(name.IsSameAs(wxT("SieFormal")))
+    {
+        return 8;
+
+    }else 
+    {
+        //es form;
+        return 9;
+
+    }
 }
