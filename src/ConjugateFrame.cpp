@@ -285,7 +285,7 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         //set all of the inputboxes back to black
         for(int i =0; i < 10; i++)
         {
-            inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            inputBoxList[i]->SetForegroundColour(wxColour(*wxBLACK));
             inputBoxList[i]->Clear();
         }
         //set the submit button back;
@@ -293,7 +293,10 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         //get next word pass false bc its not the first word
         //figure out how to change copy or change the unique pointer over to something else
         praticedWords.push_back(m_pGermanWord.release());
-        m_pGermanWord = m_pXmlHandle->getNextWord(false); 
+        m_pGermanWord = m_pXmlHandle->getNextWord(false);
+
+        results = false;
+        goNext = false;
 
 
     } else if(results)
@@ -324,6 +327,21 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         {
             wxMessageDialog *CorrectDialog = new wxMessageDialog(this, _T("You correctly conjugated the word"));
 
+            if(m_pXmlHandle->getNextWord(false) == nullptr)
+            {
+                results = true;
+                goNext = false;
+                m_pSubmitButton->SetLabel(wxT("Results"));
+
+            } else 
+            {
+                //set go next so the user can review the words 
+                goNext = true;
+                results = false;
+                //change submit text to go next
+                m_pSubmitButton->SetLabel(wxT("Next"));
+            }
+
         } else {
 
             std::vector<std::string> incorrectForms = m_pGermanWord->returnIncorrectForms(formattedEntryList);
@@ -334,19 +352,14 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
                 {
                     if(formattedEntryList[i] == incorrectForms[a])
                     {
-                        //show the incorrect word in red next to the correct form in green
                         inputBoxList[i]->Clear();
                         inputBoxList[i]->SetForegroundColour( wxColour(*wxRED));
-                        //inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxRED));
 
                         std::string userForm = formattedEntryList[i];
 
                         *inputBoxList[i] << userForm.c_str();
-                        //no mid color change
-                        //inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            
                         *inputBoxList[i] << ":";
-                        // no mid color change 
-                        //inputBoxList[i]->SetDefaultStyle(wxTextAttr(*wxGREEN));
 
                         std::string correctForm = m_pGermanWord->returnCorrectForms()[i];
                         *inputBoxList[i] << correctForm.c_str();
@@ -357,15 +370,16 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
                     if(formattedEntryList[i] == correctForms[b])
                     {
                         inputBoxList[i]->Clear();
-                        inputBoxList[i]->SetForegroundColour( wxColour(*wxRED));
+                        inputBoxList[i]->SetForegroundColour( wxColour(*wxGREEN));
                         std::string userForm = formattedEntryList[i];
                         *inputBoxList[i] << userForm.c_str(); 
                     }
                 }
             }
 
-            if(m_pGermanWord = m_pXmlHandle->getNextWord(false))
+            if(m_pXmlHandle->getNextWord(false) == nullptr)
             {
+                //std::cout << "pinter:" << m_pXmlHandle->getNextWord(false) << "\n"; 
                 results = true;
                 goNext = false;
                 m_pSubmitButton->SetLabel(wxT("Results"));

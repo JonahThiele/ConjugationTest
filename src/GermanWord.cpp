@@ -9,9 +9,6 @@
 GermanWord::GermanWord(std::vector<wxString> FormsFromXml) 
 {
     //maybe write an assert if vector can't fill all of the forms, needs 10 spaces
-    for (wxString i: FormsFromXml)
-        std::cout << i.ToStdString() << ',';
-    std::cout << '\n';
 
     baseForm = FormsFromXml[0].ToStdString();
     ichForm = FormsFromXml[1].ToStdString();

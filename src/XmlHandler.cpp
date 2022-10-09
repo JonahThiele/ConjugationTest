@@ -31,34 +31,22 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
         p_mXmlCurrentNode = p_mXmlRoot->GetChildren();
         //grab the first base word string
         wxString baseString = p_mXmlCurrentNode->GetChildren()->GetNodeContent();
-        std::cout << "Bstr:" << baseString.ToStdString() << "\n";
         //add to forms to work with the loop
         wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
         wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren(), wordForms);
-
-        //add to constructor list
-        /*for(int i = 0; i < 10; i++)
-        {
-    
-            constructorList[i] = wordForms[i];
-            
-        }*/
 
         auto Word_ptr = std::make_unique<GermanWord>(wordForms);
 
         return Word_ptr;
 
-    } else if(p_mXmlRoot->GetNext() != NULL) {
-        // grab the first node
-        p_mXmlCurrentNode = p_mXmlRoot->GetNext();
-        if(p_mXmlCurrentNode->GetNext() == NULL) 
-        {
-            return NULL;
-        }else {
-            //grab the first base word string
-            wxString baseString = p_mXmlCurrentNode->GetChildren()->GetNodeContent();
-            wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
-            wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren()->GetNext(), wordForms);
+    } else if(p_mXmlCurrentNode->GetNext() != NULL) {
+        // grab the next word node
+        p_mXmlCurrentNode = p_mXmlCurrentNode->GetNext();
+       
+        //grab the first base word string
+        wxString baseString = p_mXmlCurrentNode->GetChildren()->GetNodeContent();
+        wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
+        wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren()->GetNext(), wordForms);
 
             /*for(int i = 0; i < 10; i++)
             {
@@ -67,13 +55,9 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
             
             }*/
 
-            auto Word_ptr = std::make_unique<GermanWord>(wordForms);
+        auto Word_ptr = std::make_unique<GermanWord>(wordForms);
 
-            return Word_ptr;
-
-        }
-
-
+        return Word_ptr;
 
     } else {
             //if there is no other branch return
@@ -90,7 +74,6 @@ std::vector<wxString> XmlHandler::TraverseWord(wxXmlNode* node, std::vector<wxSt
     if(node->GetNext() != NULL)
     {
         formsList[this->indexXml(node->GetNext()->GetName())] = node->GetNext()->GetNodeContent();
-        std::cout << "Forms:" << node->GetNext()->GetNodeContent().ToStdString() << "\n";
 
         //dont know if I can initilaize an array like this
         formsList = TraverseWord(node->GetNext(), formsList);
