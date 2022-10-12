@@ -34,13 +34,16 @@ class ConjugateFrame : public wxFrame
         /** Times exercise */
         void OnTimer(wxTimerEvent &event);
 
+        //helper function
+        void SetupNext();
+
         //wxDECLARE_EVENT_TABLE();
     
         //xml control 
-        std::unique_ptr<XmlHandler> m_pXmlHandle;
+        std::unique_ptr<XmlHandler> m_pXmlHandle = nullptr;
 
         //german word control 
-        std::unique_ptr<GermanWord> m_pGermanWord;
+        std::unique_ptr<GermanWord> m_pGermanWord = nullptr;
 
         //finished GermanWords 
         std::vector<GermanWord*> praticedWords;

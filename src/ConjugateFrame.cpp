@@ -14,16 +14,6 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
         m_pTimer = new wxTimer(this, wxEVT_TIMER);
         m_pTimer->Start(1000);
 
-        //setting up event stuff
-        /*
-        Bind(wxEVT_MENU, &ConjugateFrame::OnMenuFileOpen, this, wxID_OPEN);
-        //Bind(wxEVT_MENU, &ConjugateFrame::OnMenuFileSave, this, wxID_SAVE); ass save later
-        Bind(wxEVT_MENU, &ConjugateFrame::OnMenuFileQuit, this, wxID_EXIT);
-        Bind(wxEVT_MENU, &ConjugateFrame::OnMenuHelpAbout, this, wxID_ABOUT);
-        Bind(wxEVT_TIMER, &ConjugateFrame::OnTimer, this);
-        Bind(wxEVT_BUTTON, &ConjugateFrame::OnMenuFileOpen, this, 12);
-        */
-
         for(int i = 0; i < 9; i++)
         {
             inputBoxList[i] = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
@@ -254,9 +244,9 @@ void ConjugateFrame::OnTimer(wxTimerEvent &event)
     //check if time has ran out
     if(seconds < 0){
         // message and provide some way to restart
-        wxMessageDialog *dial = new wxMessageDialog(NULL, 
+        wxMessageDialog *timesUpMess = new wxMessageDialog(NULL, 
         wxT("Your Time is Up!"), wxT("Timer"), wxOK);
-        dial->ShowModal();
+        timesUpMess->ShowModal();
 
         // set sumbit to display results
         results = true;
@@ -278,9 +268,36 @@ void ConjugateFrame::OnTimer(wxTimerEvent &event)
 
 }
 
+void ConjugateFrame::SetupNext()
+{
+    praticedWords.push_back(m_pGermanWord.release());
+    m_pGermanWord = m_pXmlHandle->getNextWord(false);
+
+    if(m_pGermanWord == nullptr)
+    {
+        results = true;
+        goNext = false;
+        m_pSubmitButton->SetLabel(wxT("Results"));
+
+    } else 
+    {
+        //set go next so the user can review the words 
+        goNext = true;
+        results = false;
+        //change submit text to go next
+        m_pSubmitButton->SetLabel(wxT("Next"));
+    }
+
+}
+
 void ConjugateFrame::OnSubmit(wxCommandEvent &event)
 {
-    if(goNext)
+    if(m_pXmlHandle == nullptr)
+    {
+        wxMessageDialog *NoFile = new wxMessageDialog(NULL, wxT("No File found, Load File First"), wxT("NO_FILE"), wxOK);
+        NoFile->ShowModal();
+
+    }else if(goNext)
     {
         //set all of the inputboxes back to black
         for(int i =0; i < 10; i++)
@@ -292,8 +309,6 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         m_pSubmitButton->SetLabel(wxT("Submit"));
         //get next word pass false bc its not the first word
         //figure out how to change copy or change the unique pointer over to something else
-        praticedWords.push_back(m_pGermanWord.release());
-        m_pGermanWord = m_pXmlHandle->getNextWord(false);
 
         results = false;
         goNext = false;
@@ -311,7 +326,7 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         //hide conjugate frame
         this->Show(false);
 
-    } else{
+    } else if(m_pXmlHandle != nullptr){
         std::string formattedEntryList[10];
         for(int i = 0; i < 10; i++)
         {
@@ -325,22 +340,19 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
 
         if(m_pGermanWord->checkIfAllInputCorrect(formattedEntryList)) 
         {
-            wxMessageDialog *CorrectDialog = new wxMessageDialog(this, _T("You correctly conjugated the word"));
+            wxMessageDialog *CorrectInput = new wxMessageDialog(NULL, wxT("You correctly conjucated the word!"), wxT("All Correct"), wxOK);
+            CorrectInput->ShowModal();
 
-            if(m_pXmlHandle->getNextWord(false) == nullptr)
+            //set all forms to green
+            for(int i = 0; i < 10; i++)
             {
-                results = true;
-                goNext = false;
-                m_pSubmitButton->SetLabel(wxT("Results"));
-
-            } else 
-            {
-                //set go next so the user can review the words 
-                goNext = true;
-                results = false;
-                //change submit text to go next
-                m_pSubmitButton->SetLabel(wxT("Next"));
+                inputBoxList[i]->Clear();
+                inputBoxList[i]->SetForegroundColour( wxColour(*wxGREEN));
+                std::string userForm = formattedEntryList[i];
+                *inputBoxList[i] << userForm.c_str(); 
             }
+
+            this->SetupNext();
 
         } else {
 
@@ -376,22 +388,8 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
                     }
                 }
             }
-
-            if(m_pXmlHandle->getNextWord(false) == nullptr)
-            {
-                //std::cout << "pinter:" << m_pXmlHandle->getNextWord(false) << "\n"; 
-                results = true;
-                goNext = false;
-                m_pSubmitButton->SetLabel(wxT("Results"));
-
-            } else 
-            {
-                //set go next so the user can review the words 
-                goNext = true;
-                results = false;
-                //change submit text to go next
-                m_pSubmitButton->SetLabel(wxT("Next"));
-            }
+            
+            this->SetupNext();
 
         }
 

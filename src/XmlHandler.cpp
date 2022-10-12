@@ -39,7 +39,7 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
 
         return Word_ptr;
 
-    } else if(p_mXmlCurrentNode->GetNext() != NULL) {
+    } else if(p_mXmlCurrentNode->GetNext() != nullptr) {
         // grab the next word node
         p_mXmlCurrentNode = p_mXmlCurrentNode->GetNext();
        
@@ -48,14 +48,8 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
         wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
         wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren()->GetNext(), wordForms);
 
-            /*for(int i = 0; i < 10; i++)
-            {
-        
-                constructorList[i] = wordForms[i];
-            
-            }*/
-
         auto Word_ptr = std::make_unique<GermanWord>(wordForms);
+        std::cout << Word_ptr->returnNameBaseForm() << "\n";
 
         return Word_ptr;
 

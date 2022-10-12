@@ -35,7 +35,8 @@ bool GermanWord::checkIfAllInputCorrect(std::string inputList[])
 {
     for(int i = 0; i < 10; i++)
     {
-        if(inputList[i] != checkList[i])
+        //std::cout << "IN:" << inputList[i] << " CH:" << checkList[i].ToStdString() <<  "\n";
+        if(inputList[i].compare(checkList[i]))
             return false;
     }
 
