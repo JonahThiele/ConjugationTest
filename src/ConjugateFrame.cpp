@@ -169,7 +169,8 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
         //file menu
         m_pFileMenu = new wxMenu();
         m_pFileMenu->Append(wxID_OPEN, _T("&Open"), _T("Opens an existing file"));
-        m_pFileMenu->Append(wxID_SAVE, _("&Save"), _T("Saves the content"));
+        m_pFileMenu->Append(wxID_SAVE, _T("&Save"), _T("Saves to new file"));
+        m_pFileMenu->Append(14, _T("&Append"), _T("Appends to existing file"));
         m_pFileMenu->AppendSeparator();
         m_pFileMenu->Append(wxID_EXIT, _T("&Quit"), _T("Quit the application"));
         m_pMenuBar->Append(m_pFileMenu, _T("&File"));
@@ -188,7 +189,8 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
 //ex: warning: creating DT_TEXTREL in a PIE, undefined reference to `vtable for ConjugateFrame'
 BEGIN_EVENT_TABLE(ConjugateFrame, wxFrame)
     EVT_MENU(wxID_OPEN, ConjugateFrame::OnMenuFileOpen)
-    //EVT_MENU(wxID_SAVE, ConjugateFrame::OnMenuFileSave) add save functionality later
+    EVT_MENU(wxID_SAVE, ConjugateFrame::OnMenuFileSave) 
+    EVT_MENU(14, ConjugateFrame::OnMenuFileAppend)
     EVT_MENU(wxID_EXIT, ConjugateFrame::OnMenuFileQuit)
     EVT_MENU(wxID_ABOUT, ConjugateFrame::OnMenuHelpAbout)
     EVT_TIMER(wxEVT_TIMER, ConjugateFrame::OnTimer)
@@ -207,7 +209,7 @@ void ConjugateFrame::OnMenuFileOpen(wxCommandEvent &event)
         //std::string filepath = std::string(OpenDialog->GetPath().mb_str());
         //conversion issue between wxstring and std::string
     
-        m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(OpenDialog->GetPath()));
+        m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(OpenDialog->GetPath(), false));
         //grab first german word pass true bc its the first word
         m_pGermanWord = std::make_unique<GermanWord>(*m_pXmlHandle->getNextWord(true));
 
@@ -217,16 +219,42 @@ void ConjugateFrame::OnMenuFileOpen(wxCommandEvent &event)
 
 void ConjugateFrame::OnMenuFileSave(wxCommandEvent &event)
 {
-    /*wxFileDialog *SaveDialog = new wxFileDialog(this, _T("Choose a file"), _(""), _(""), _("*.*"), wxFD_SAVE);
+    wxFileDialog *SaveDialog = new wxFileDialog(this, _T("Choose a file"), _(""), _(""), _("*.*"), wxFD_SAVE);
     if ( SaveDialog->ShowModal() == wxID_OK)
     {
         //m_pTextCtrl->SaveFile(SaveDialog->GetPath()) ? SetStatusText(_T("Saved")) : SetStatusText("Saved Failed");
 
+        // new file
+        wxXmlDocument *file = new wxXmlDocument();
+
+        //fill with dummy info to overwrite
+        file->SetFileEncoding(wxT("UTF-8"));
+        file->SetVersion(wxT("1.0"));
+        wxString saveFileName = SaveDialog->GetPath();
+        saveFileName += wxT(".xml");
+        file->Save(SaveDialog->GetPath());
+  
+        m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(SaveDialog->GetPath(), true));
+        saveFileOpen = true;
+
     }
     SaveDialog->Close();
-    */
-   //set up xml stuff
+    
+}
 
+void ConjugateFrame::OnMenuFileAppend(wxCommandEvent &event)
+{
+     wxFileDialog *AppendDialog = new wxFileDialog(this,_T("Choose a file"), _(""), _(""), 
+                                                        "xml files (*.xml)|*.xml", wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+    if ( AppendDialog->ShowModal() == wxID_OK)
+    {
+        //m_pTextCtrl->SaveFile(SaveDialog->GetPath()) ? SetStatusText(_T("Saved")) : SetStatusText("Saved Failed");
+
+        m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(AppendDialog->GetPath(), false));
+        saveFileOpen = true;
+
+    }
+    AppendDialog->Close();
 }
 
 void ConjugateFrame::OnMenuFileQuit(wxCommandEvent &event)
@@ -297,7 +325,33 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         wxMessageDialog *NoFile = new wxMessageDialog(NULL, wxT("No File found, Load File First"), wxT("NO_FILE"), wxOK);
         NoFile->ShowModal();
 
-    }else if(goNext)
+    }else if(saveFileOpen)
+    {
+        bool finalWordWrote = false;
+        std::vector<wxString> savedForms;
+
+        for(int i =0; i < 10; i++)
+        {
+            if(inputBoxList[i]->GetValue().ToStdString() == "end")
+            {
+                //close file 
+                finalWordWrote = true;
+                break;
+            }else{
+
+                savedForms.push_back(inputBoxList[i]->GetValue());
+            }
+        }
+        if(finalWordWrote)
+        {
+            m_pXmlHandle->SaveFile();
+        }else{
+
+            m_pXmlHandle->WriteWord(savedForms);
+        }
+
+    }
+    else if(goNext)
     {
         //set all of the inputboxes back to black
         for(int i =0; i < 10; i++)
@@ -394,5 +448,4 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         }
 
     }
-
 }

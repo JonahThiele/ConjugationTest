@@ -29,6 +29,8 @@ class ConjugateFrame : public wxFrame
         void OnMenuFileQuit(wxCommandEvent &event);
         /** Processes menu About|Info */
         void OnMenuHelpAbout(wxCommandEvent &event);
+        //process appending to xml file
+        void OnMenuFileAppend(wxCommandEvent &event);
         /** Checks user input in text boxes */
         void OnSubmit(wxCommandEvent &event);
         /** Times exercise */
@@ -62,6 +64,7 @@ class ConjugateFrame : public wxFrame
         wxButton *m_pSubmitButton;
         bool goNext = false;
         bool results = false;
+        bool saveFileOpen = false;
 
         wxTextCtrl *m_pBaseWordCtrl;
         wxTextCtrl *m_pIchCtrl;

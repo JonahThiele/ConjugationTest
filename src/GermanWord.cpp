@@ -26,6 +26,7 @@ GermanWord::GermanWord(std::vector<wxString> FormsFromXml)
     for(int i =0; i < 10; i++)
     {
         temparray[i] = FormsFromXml[i];
+       
     }
     std::copy(temparray, temparray + 10, checkList);
 

@@ -13,15 +13,12 @@ class ResultsFrame : public wxFrame
         ~ResultsFrame(){};
     protected:
 
-        //wxDECLARE_EVENT_TABLE();
-        
+       
     private:
 
         void OnButtonClick(wxCommandEvent &event);
 
         wxBoxSizer *m_pBoxSizer;
-        //wxPanel *m_pPanel;
-
         //end and return button 
         wxButton *m_pEndReturnButton;
     
@@ -30,10 +27,7 @@ class ResultsFrame : public wxFrame
         std::vector<GermanWord*> finishedWords;
 
         const int buttonOffset = 45;
-        /*wxMenuBar *m_pMenuBar;
-        wxMenu *m_pFileMenu;
-        wxMenu *m_pHelpMenu;
-        */
+        
    
 };
 

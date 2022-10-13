@@ -7,13 +7,74 @@
 #include "XmlHandler.hpp"
 
 
-XmlHandler::XmlHandler(wxString filename) 
-{
+XmlHandler::XmlHandler(wxString filename, bool isNewFile) 
+{   
+    this->filename = filename;
     p_mXmlDoc = new wxXmlDocument(filename);
+
+    if(isNewFile)
+    {
+        p_mXmlDoc->SetFileEncoding(wxT("UTF-8"));
+        p_mXmlDoc->SetRoot(new wxXmlNode(wxXML_ELEMENT_NODE, wxT("Root")));
+        p_mXmlDoc->SetVersion(wxT("1.0"));
+    } 
 
     p_mXmlRoot = p_mXmlDoc->GetRoot();
 
+}
 
+void XmlHandler::SetUpWord(std::vector<wxString> savedForms, wxXmlNode* WordNode)
+{
+
+    wxXmlNode * BaseFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Base"));
+    new wxXmlNode(BaseFormNode, wxXML_TEXT_NODE, wxT("Base"), savedForms[0]);
+
+    wxXmlNode * IchFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Ich"));
+    new wxXmlNode(IchFormNode, wxXML_TEXT_NODE, wxT("Ich"), savedForms[1]);
+
+    wxXmlNode * WirFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Wir"));
+    new wxXmlNode(WirFormNode, wxXML_TEXT_NODE, wxT("Wir"), savedForms[2]);
+
+    wxXmlNode * DuFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Du"));
+    new wxXmlNode(DuFormNode, wxXML_TEXT_NODE, wxT("Du"), savedForms[3]);
+
+    wxXmlNode * IhrFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Ihr"));
+    new wxXmlNode(IhrFormNode, wxXML_TEXT_NODE, wxT("Ihr"), savedForms[4]);
+
+    wxXmlNode * ErFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Er"));
+    new wxXmlNode(ErFormNode, wxXML_TEXT_NODE, wxT("Er"), savedForms[5]);
+
+    wxXmlNode * SieTheyFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("SieThey"));
+    new wxXmlNode(SieTheyFormNode, wxXML_TEXT_NODE, wxT("SieThey"), savedForms[6]);
+
+    wxXmlNode * SieFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Sie"));
+    new wxXmlNode(SieFormNode, wxXML_TEXT_NODE, wxT("Sie"), savedForms[7]);
+
+    wxXmlNode * SieFormalFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("SieFormal"));
+    new wxXmlNode(SieFormalFormNode, wxXML_TEXT_NODE, wxT("SieFormal"), savedForms[8]);
+
+    wxXmlNode * EsFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Es"));
+    new wxXmlNode(EsFormNode, wxXML_TEXT_NODE, wxT("Es"), savedForms[9]);
+
+}
+
+void XmlHandler::WriteWord(std::vector<wxString> savedForms)
+{   
+    if(p_mXmlRoot->GetChildren() == nullptr)
+    {
+        wxXmlNode * WordNode = new wxXmlNode(p_mXmlRoot, wxXML_ELEMENT_NODE, wxT("Word"));
+        SetUpWord(savedForms, WordNode);
+    }else{
+        //change if insert does not really work, figure out another way, if it does simply replace this
+        wxXmlNode * WordNode = new wxXmlNode(p_mXmlRoot, wxXML_ELEMENT_NODE, wxT("Word"));
+        SetUpWord(savedForms, WordNode);
+    }
+
+}
+
+void XmlHandler::SaveFile()
+{
+    p_mXmlDoc->Save(filename);
 }
 
 std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
@@ -46,10 +107,9 @@ std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
         //grab the first base word string
         wxString baseString = p_mXmlCurrentNode->GetChildren()->GetNodeContent();
         wordForms[this->indexXml(p_mXmlCurrentNode->GetChildren()->GetName())] = baseString;
-        wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren()->GetNext(), wordForms);
+        wordForms = this->TraverseWord(p_mXmlCurrentNode->GetChildren(), wordForms);
 
         auto Word_ptr = std::make_unique<GermanWord>(wordForms);
-        std::cout << Word_ptr->returnNameBaseForm() << "\n";
 
         return Word_ptr;
 

@@ -19,21 +19,17 @@ ResultsFrame::ResultsFrame(const wxChar *title, int xpos, int ypos, int width, i
             ResultWordList.push_back(m_pWordButton);
 
             m_pBoxSizer->Add(
-            m_pWordButton,
+            ResultWordList[i],
             wxSizerFlags().Align(0).Shaped().Center()
             );
-
             //connect to handlers
-            
-            //word->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ResultsFrame::OnButtonClick), NULL, this);
-            m_pWordButton->Bind(wxEVT_BUTTON, &ResultsFrame::OnButtonClick, this, i + buttonOffset);
+            this->Bind(wxEVT_BUTTON, &ResultsFrame::OnButtonClick, this, i + buttonOffset);
         }
 
         SetSizerAndFit(m_pBoxSizer);
     
     }
-    // figure out what you need to do to get dynamic binding 
-
+    
 void ResultsFrame::OnButtonClick(wxCommandEvent &event)
 {
     for(int i = 0; i < finishedWords.size(); i++)

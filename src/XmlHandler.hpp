@@ -8,12 +8,18 @@
 
 class XmlHandler {
     public:
-        XmlHandler(wxString filename);
+        XmlHandler(wxString filename, bool);
         //empty deconstructor to make linker happy :)
         ~XmlHandler(){};
 
         //return next word
         std::unique_ptr<GermanWord> getNextWord(bool);
+
+        void SetUpWord(std::vector<wxString>, wxXmlNode *);
+
+        void WriteWord(std::vector<wxString>);
+
+        void SaveFile();
 
         //return correct index to place read xml contents
         int indexXml(wxString xmlName);
@@ -23,6 +29,8 @@ class XmlHandler {
         wxXmlNode * p_mXmlRoot;
         //update to traverse tree
         wxXmlNode * p_mXmlCurrentNode;
+
+        wxString filename;
 
         //recursive wrapper to navigate xml
         std::vector<wxString> TraverseWord(wxXmlNode*, std::vector<wxString>&);
