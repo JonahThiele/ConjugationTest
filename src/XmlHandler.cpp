@@ -26,35 +26,38 @@ XmlHandler::XmlHandler(wxString filename, bool isNewFile)
 void XmlHandler::SetUpWord(std::vector<wxString> savedForms, wxXmlNode* WordNode)
 {
 
+    wxXmlNode * DescriptionNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Description"));
+    new wxXmlNode(DescriptionNode, wxXML_TEXT_NODE, wxT("Description"), savedForms[0]);
+
     wxXmlNode * BaseFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Base"));
-    new wxXmlNode(BaseFormNode, wxXML_TEXT_NODE, wxT("Base"), savedForms[0]);
+    new wxXmlNode(BaseFormNode, wxXML_TEXT_NODE, wxT("Base"), savedForms[1]);
 
     wxXmlNode * IchFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Ich"));
-    new wxXmlNode(IchFormNode, wxXML_TEXT_NODE, wxT("Ich"), savedForms[1]);
+    new wxXmlNode(IchFormNode, wxXML_TEXT_NODE, wxT("Ich"), savedForms[2]);
 
     wxXmlNode * WirFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Wir"));
-    new wxXmlNode(WirFormNode, wxXML_TEXT_NODE, wxT("Wir"), savedForms[2]);
+    new wxXmlNode(WirFormNode, wxXML_TEXT_NODE, wxT("Wir"), savedForms[3]);
 
     wxXmlNode * DuFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Du"));
-    new wxXmlNode(DuFormNode, wxXML_TEXT_NODE, wxT("Du"), savedForms[3]);
+    new wxXmlNode(DuFormNode, wxXML_TEXT_NODE, wxT("Du"), savedForms[4]);
 
     wxXmlNode * IhrFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Ihr"));
-    new wxXmlNode(IhrFormNode, wxXML_TEXT_NODE, wxT("Ihr"), savedForms[4]);
+    new wxXmlNode(IhrFormNode, wxXML_TEXT_NODE, wxT("Ihr"), savedForms[5]);
 
     wxXmlNode * ErFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Er"));
-    new wxXmlNode(ErFormNode, wxXML_TEXT_NODE, wxT("Er"), savedForms[5]);
+    new wxXmlNode(ErFormNode, wxXML_TEXT_NODE, wxT("Er"), savedForms[6]);
 
     wxXmlNode * SieTheyFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("SieThey"));
-    new wxXmlNode(SieTheyFormNode, wxXML_TEXT_NODE, wxT("SieThey"), savedForms[6]);
+    new wxXmlNode(SieTheyFormNode, wxXML_TEXT_NODE, wxT("SieThey"), savedForms[7]);
 
     wxXmlNode * SieFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Sie"));
-    new wxXmlNode(SieFormNode, wxXML_TEXT_NODE, wxT("Sie"), savedForms[7]);
+    new wxXmlNode(SieFormNode, wxXML_TEXT_NODE, wxT("Sie"), savedForms[8]);
 
     wxXmlNode * SieFormalFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("SieFormal"));
-    new wxXmlNode(SieFormalFormNode, wxXML_TEXT_NODE, wxT("SieFormal"), savedForms[8]);
+    new wxXmlNode(SieFormalFormNode, wxXML_TEXT_NODE, wxT("SieFormal"), savedForms[9]);
 
     wxXmlNode * EsFormNode = new wxXmlNode(WordNode, wxXML_ELEMENT_NODE, wxT("Es"));
-    new wxXmlNode(EsFormNode, wxXML_TEXT_NODE, wxT("Es"), savedForms[9]);
+    new wxXmlNode(EsFormNode, wxXML_TEXT_NODE, wxT("Es"), savedForms[10]);
 
 }
 
@@ -80,7 +83,7 @@ void XmlHandler::SaveFile()
 std::unique_ptr<GermanWord> XmlHandler::getNextWord(bool FirstWord)
 {
     // empty for easy index
-    std::vector<wxString> wordForms = {wxString("0"), wxString("0"), wxString("0"),
+    std::vector<wxString> wordForms = {wxString("0"), wxString("0"), wxString("0"), wxString("0"),
                                       wxString("0"), wxString("0"), wxString("0"),
                                       wxString("0"), wxString("0"), wxString("0"),
                                       wxString("0")};
@@ -144,46 +147,50 @@ std::vector<wxString> XmlHandler::TraverseWord(wxXmlNode* node, std::vector<wxSt
 
 int XmlHandler::indexXml(wxString name)
 {
-    if(name.IsSameAs(wxT("Base")))
+    if(name.IsSameAs(wxT("Description")))
     {
         return 0;
 
-    } else if(name.IsSameAs(wxT("Ich")))
+    }else if(name.IsSameAs(wxT("Base")))
     {
         return 1;
 
-    }else if(name.IsSameAs(wxT("Wir")))
+    }else if(name.IsSameAs(wxT("Ich")))
     {
         return 2;
 
-    }else if(name.IsSameAs(wxT("Du")))
+    }else if(name.IsSameAs(wxT("Wir")))
     {
         return 3;
 
-    }else if(name.IsSameAs(wxT("Ihr")))
+    }else if(name.IsSameAs(wxT("Du")))
     {
         return 4;
 
-    }else if(name.IsSameAs(wxT("Er")))
+    }else if(name.IsSameAs(wxT("Ihr")))
     {
         return 5;
 
-    }else if(name.IsSameAs(wxT("SieThey")))
+    }else if(name.IsSameAs(wxT("Er")))
     {
         return 6;
 
-    }else if(name.IsSameAs(wxT("Sie")))
+    }else if(name.IsSameAs(wxT("SieThey")))
     {
         return 7;
 
-    }else if(name.IsSameAs(wxT("SieFormal")))
+    }else if(name.IsSameAs(wxT("Sie")))
     {
         return 8;
+
+    }else if(name.IsSameAs(wxT("SieFormal")))
+    {
+        return 9;
 
     }else 
     {
         //es form;
-        return 9;
+        return 10;
 
     }
 }

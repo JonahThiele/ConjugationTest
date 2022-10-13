@@ -55,6 +55,9 @@ class ConjugateFrame : public wxFrame
         wxStaticText *m_pTimerText;
         int seconds = 240;
 
+        //description
+
+
         // set up the appearance and structure of the main interface.
         wxFlexGridSizer *m_pFlexGridSizer;
         wxBoxSizer *m_pBoxSizer;
@@ -66,6 +69,7 @@ class ConjugateFrame : public wxFrame
         bool results = false;
         bool saveFileOpen = false;
 
+        wxTextCtrl *m_pDescriptionText;
         wxTextCtrl *m_pBaseWordCtrl;
         wxTextCtrl *m_pIchCtrl;
         wxTextCtrl *m_pWirCtrl;
@@ -79,7 +83,7 @@ class ConjugateFrame : public wxFrame
 
         //std::vector<std::string> inputBoxCaptions = { "Ich", "Wir", "Du", "Ihr", "Er", "Sie", "Sie", "Sie(Formal)", "Es"};
 
-        std::vector<wxTextCtrl*> inputBoxList= { m_pBaseWordCtrl, m_pIchCtrl, m_pWirCtrl, m_pDuCtrl, m_pIhrCtrl, m_pErCtrl, 
+        std::vector<wxTextCtrl*> inputBoxList= { m_pDescriptionText, m_pBaseWordCtrl, m_pIchCtrl, m_pWirCtrl, m_pDuCtrl, m_pIhrCtrl, m_pErCtrl, 
                                                  m_pSieTheyCtrl, m_pSieHerCtrl, m_pSieFormalCtrl, m_pEsCtrl};
 
         wxMenuBar *m_pMenuBar;

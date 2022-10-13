@@ -9,26 +9,26 @@
 GermanWord::GermanWord(std::vector<wxString> FormsFromXml) 
 {
     //maybe write an assert if vector can't fill all of the forms, needs 10 spaces
-
-    baseForm = FormsFromXml[0].ToStdString();
-    ichForm = FormsFromXml[1].ToStdString();
-    wirForm = FormsFromXml[2].ToStdString();
-    duForm = FormsFromXml[3].ToStdString();
-    ihrForm = FormsFromXml[4].ToStdString();
-    erForm = FormsFromXml[5].ToStdString();
-    sieTheyForm = FormsFromXml[6].ToStdString();
-    sieForm = FormsFromXml[7].ToStdString();
-    sieFormalForm = FormsFromXml[8].ToStdString();
-    esForm = FormsFromXml[9].ToStdString();
+    description = FormsFromXml[0].ToStdString();
+    baseForm = FormsFromXml[1].ToStdString();
+    ichForm = FormsFromXml[2].ToStdString();
+    wirForm = FormsFromXml[3].ToStdString();
+    duForm = FormsFromXml[4].ToStdString();
+    ihrForm = FormsFromXml[5].ToStdString();
+    erForm = FormsFromXml[6].ToStdString();
+    sieTheyForm = FormsFromXml[7].ToStdString();
+    sieForm = FormsFromXml[8].ToStdString();
+    sieFormalForm = FormsFromXml[9].ToStdString();
+    esForm = FormsFromXml[10].ToStdString();
 
     //add to check list to make it simple to check
-    std::string temparray[10];
-    for(int i =0; i < 10; i++)
+    std::string temparray[11];
+    for(int i =0; i < 11; i++)
     {
         temparray[i] = FormsFromXml[i];
        
     }
-    std::copy(temparray, temparray + 10, checkList);
+    std::copy(temparray, temparray + 11, checkList);
 
 }
 
@@ -36,8 +36,8 @@ bool GermanWord::checkIfAllInputCorrect(std::string inputList[])
 {
     for(int i = 0; i < 10; i++)
     {
-        //std::cout << "IN:" << inputList[i] << " CH:" << checkList[i].ToStdString() <<  "\n";
-        if(inputList[i].compare(checkList[i]))
+        
+        if(inputList[i].compare(checkList[i + 1]))
             return false;
     }
 
@@ -50,7 +50,7 @@ std::vector<std::string> GermanWord::returnIncorrectForms(std::string inputList[
     std::vector<std::string> incorrectList;
     for(int i = 0; i < 10; i++)
     {
-        if(inputList[i] != checkList[i]){
+        if(inputList[i] != checkList[i + 1]){
             incorrectList.push_back(inputList[i]);
         }
     }
@@ -62,7 +62,7 @@ std::vector<std::string> GermanWord::returnCorrectForms(std::string inputList[])
     std::vector<std::string> incorrectList;
     for(int i = 0; i < 10; i++)
     {
-        if(inputList[i] == checkList[i]){
+        if(inputList[i] == checkList[i + 1]){
             incorrectList.push_back(inputList[i]);
         }
     }

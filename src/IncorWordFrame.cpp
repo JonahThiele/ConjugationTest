@@ -13,14 +13,21 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
         m_pFlexGridSizer = new wxFlexGridSizer(2);
 
         wxString* firstForm= m_pGermanWord->returnAllForms();
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < 11; i++)
         {
             formList[i] = *(firstForm + i);
         }
 
+        wxString Description("Description:");
+        wxString DescriptionLabel = Description + formList[0];
+
+        m_pBoxSizer->Add(
+            new wxStaticText(this, wxID_ANY, DescriptionLabel, wxDefaultPosition, wxDefaultSize),
+            wxSizerFlags().Align(0).Shaped().Center()
+        );
 
         wxString BaseForm("Base Word:");
-        wxString BaseLabel = BaseForm + formList[0];
+        wxString BaseLabel = BaseForm + formList[1];
 
         m_pBoxSizer->Add(
             new wxStaticText(this, wxID_ANY, BaseLabel, wxDefaultPosition, wxDefaultSize),
@@ -28,7 +35,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
         );
 
         wxString IchForm("Ich Form:");
-        wxString IchLabel = IchForm + formList[1];
+        wxString IchLabel = IchForm + formList[2];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, IchLabel , wxDefaultPosition, wxDefaultSize),
@@ -37,7 +44,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
 
  
         wxString WirForm("Wir Form:");
-        wxString WirLabel = WirForm + formList[2];
+        wxString WirLabel = WirForm + formList[3];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, WirLabel , wxDefaultPosition, wxDefaultSize),
@@ -45,7 +52,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
         );
 
         wxString DuForm("Du Form:");
-        wxString DuLabel = DuForm + formList[3];
+        wxString DuLabel = DuForm + formList[4];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, DuLabel , wxDefaultPosition, wxDefaultSize),
@@ -54,7 +61,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
 
 
         wxString IhrForm("Ihr Form:");
-        wxString IhrLabel = IhrForm + formList[4];
+        wxString IhrLabel = IhrForm + formList[5];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, IhrLabel, wxDefaultPosition, wxDefaultSize),
@@ -63,7 +70,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
 
 
         wxString ErForm("Er Form:");
-        wxString ErLabel = ErForm + formList[5];
+        wxString ErLabel = ErForm + formList[6];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, ErLabel , wxDefaultPosition, wxDefaultSize),
@@ -72,7 +79,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
 
 
         wxString SieTheyForm("Sie Form:");
-        wxString SieTheyFormLabel = SieTheyForm + formList[6];
+        wxString SieTheyFormLabel = SieTheyForm + formList[7];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, SieTheyFormLabel , wxDefaultPosition, wxDefaultSize),
@@ -81,7 +88,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
 
 
         wxString SieHerForm("Sie Form:");
-        wxString SieHerLabel = SieHerForm + formList[7];
+        wxString SieHerLabel = SieHerForm + formList[8];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, SieHerLabel, wxDefaultPosition, wxDefaultSize),
@@ -90,7 +97,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
 
         
         wxString SieFormalForm("Sie Form:");
-        wxString SieFormalLabel = SieFormalLabel + formList[8];
+        wxString SieFormalLabel = SieFormalLabel + formList[9];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, SieHerLabel, wxDefaultPosition, wxDefaultSize),
@@ -98,7 +105,7 @@ IncorWordFrame::IncorWordFrame(const wxChar *title, int xpos, int ypos, int widt
         );
 
         wxString EsForm("Es Form:");
-        wxString EsLabel = EsForm + formList[9];
+        wxString EsLabel = EsForm + formList[10];
 
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, EsLabel, wxDefaultPosition, wxDefaultSize),

@@ -23,8 +23,11 @@ class GermanWord {
         //return all forms 
         wxString * returnAllForms(){ return checkList;}
 
+        wxString returnDescription(){ return description;}
+
 
     private:
+        wxString description;
         wxString baseForm;
         wxString ichForm;
         wxString duForm;
@@ -35,7 +38,7 @@ class GermanWord {
         wxString esForm; 
         wxString sieFormalForm;
         wxString ihrForm;
-        wxString checkList[10];
+        wxString checkList[11];
 
 };
 
