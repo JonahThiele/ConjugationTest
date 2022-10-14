@@ -6,44 +6,42 @@
 
 #include "ResultsFrame.hpp"
 
-ResultsFrame::ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<GermanWord*> words)
-    : wxFrame((wxFrame *) NULL, -1, title, wxPoint(xpos, ypos), wxSize(width, height), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX))
+ResultsFrame::ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::vector<std::shared_ptr<GermanWord>> words)
+    : wxFrame((wxFrame *) NULL, -1, title, wpoint, wxSize(width, height))
     {
         finishedWords = words;
 
         m_pBoxSizer = new wxBoxSizer( wxVERTICAL );
 
+        this->SetMinSize(wxSize(150, words.size() * 60));
+
         for(int i = 0; i < words.size(); i++)
         {
-            wxButton *m_pWordButton = new wxButton(this, wxID_ANY, words[i]->returnNameBaseForm());
+            const int buttonID = buttonOffset + i;
+            wxButton *m_pWordButton = new wxButton(this, buttonID, words[i]->returnNameBaseForm());
             ResultWordList.push_back(m_pWordButton);
 
             m_pBoxSizer->Add(
             ResultWordList[i],
-            wxSizerFlags().Align(0).Shaped().Center()
+            wxSizerFlags().Center().Expand().Shaped()
             );
-            //connect to handlers
-            this->Bind(wxEVT_BUTTON, &ResultsFrame::OnButtonClick, this, i + buttonOffset);
         }
 
-        SetSizerAndFit(m_pBoxSizer);
+       Bind(wxEVT_BUTTON, &ResultsFrame::OnButtonClick, this, buttonOffset, buttonOffset + words.size());
+
+       this->SetSizer(m_pBoxSizer);
+       Centre();
+       //SetSizerAndFit(m_pBoxSizer);
     
     }
     
 void ResultsFrame::OnButtonClick(wxCommandEvent &event)
 {
-    for(int i = 0; i < finishedWords.size(); i++)
-    {
-        if(event.GetId() == buttonOffset + i)
-        {
-            // open new window that shows the incorrect forms
-            IncorWordFrame *incorWordFrame = new IncorWordFrame(finishedWords[i]->returnNameBaseForm(), 100, 100, 400, 300, finishedWords[i]);
-            incorWordFrame->Show(true);
-            incorWordFrame->Raise();
-            incorWordFrame->SetFocus();
-            //hide conjugate frame
-            this->Show(false);
-        }
-    }
+    IncorWordFrame *incorWordFrame = new IncorWordFrame(finishedWords[event.GetId() - buttonOffset]->returnNameBaseForm(), this->GetPosition(), 400, 300, finishedWords[event.GetId() - buttonOffset]);
+    incorWordFrame->Show(true);
+    incorWordFrame->Raise();
+    incorWordFrame->SetFocus();
+    //hide conjugate frame
+    //this->Show(false);
     
 }

@@ -19,16 +19,12 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
             inputBoxList[i] = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
         }
 
-
-
         m_pBoxSizer = new wxBoxSizer( wxVERTICAL );
-        //m_pPanel = new wxPanel(m_pPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T(""));
+        
         m_pFlexGridSizer = new wxFlexGridSizer(2);
 
 
-        //inputBoxList[9] = new wxTextCtrl(this,  wxID_ANY,  wxT(""), wxDefaultPosition, wxDefaultSize);
-
-        m_pSubmitButton = new wxButton(this, 12, wxT("submit"));
+        m_pSubmitButton = new wxButton(this, wxID_ANY, wxT("submit"));
 
         m_pTimerText = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
 
@@ -39,7 +35,7 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
         );
 
         m_pBoxSizer->Add(
-            new wxStaticText(this, wxID_ANY, wxT("Description"), wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_DONTWRAP),
+            new wxStaticText(this, wxID_ANY, wxT("Description"), wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP),
             wxSizerFlags().Align(0).Shaped().Center()
         );
 
@@ -58,15 +54,6 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
             wxSizerFlags().Align(0).Shaped().Center().Border(wxALL, 10)
         );
 
-
-
-        /*for(int i = 0; i < 9; i++)
-        {
-            inputBoxList[i] = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
-        }*/
-
-
-        // tried to use a loop but it rose an assert "Adding window to the same twice"
         m_pFlexGridSizer->Add(
             new wxStaticText(this, wxID_ANY, wxT("Ich"), wxDefaultPosition, wxDefaultSize),
             wxSizerFlags().Align(0).Shaped().Center()
@@ -200,11 +187,11 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
 BEGIN_EVENT_TABLE(ConjugateFrame, wxFrame)
     EVT_MENU(wxID_OPEN, ConjugateFrame::OnMenuFileOpen)
     EVT_MENU(wxID_SAVE, ConjugateFrame::OnMenuFileSave) 
-    EVT_MENU(14, ConjugateFrame::OnMenuFileAppend)
+    EVT_MENU(wxID_ANY, ConjugateFrame::OnMenuFileAppend)
     EVT_MENU(wxID_EXIT, ConjugateFrame::OnMenuFileQuit)
     EVT_MENU(wxID_ABOUT, ConjugateFrame::OnMenuHelpAbout)
     EVT_TIMER(wxEVT_TIMER, ConjugateFrame::OnTimer)
-    EVT_BUTTON(12, ConjugateFrame::OnSubmit)
+    EVT_BUTTON(wxID_ANY, ConjugateFrame::OnSubmit)
 END_EVENT_TABLE()
 
 
@@ -230,6 +217,11 @@ void ConjugateFrame::OnMenuFileOpen(wxCommandEvent &event)
         inputBoxList[0]->SetDefaultStyle(wxTextAttr(wxTE_READONLY));
         wxString description = m_pGermanWord->returnDescription();
         *inputBoxList[0] << description;
+
+        goNext = true;
+        results = false;
+        m_pSubmitButton->SetLabel(wxT("Submit"));
+        praticedWords.clear();
 
     }
     OpenDialog->Close();
@@ -260,7 +252,8 @@ void ConjugateFrame::OnMenuFileSave(wxCommandEvent &event)
   
         m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(saveFileName, true));
         saveFileOpen = true;
-        inputBoxList[0]->SetDefaultStyle(wxTextAttr(wxLayout_Default));
+        //inputBoxList[0]->SetDefaultStyle(nullptr);
+        
 
     }
     SaveDialog->Close();
@@ -282,7 +275,7 @@ void ConjugateFrame::OnMenuFileAppend(wxCommandEvent &event)
 
         m_pXmlHandle = std::make_unique<XmlHandler>(XmlHandler(AppendDialog->GetPath(), false));
         saveFileOpen = true;
-        inputBoxList[0]->SetDefaultStyle(wxTextAttr(wxLayout_Default));
+        //inputBoxList[0]->SetDefaultStyle(nullptr);
 
     }
     AppendDialog->Close();
@@ -301,7 +294,11 @@ void ConjugateFrame::OnMenuHelpAbout(wxCommandEvent &event)
 void ConjugateFrame::OnTimer(wxTimerEvent &event)
 {
     //check if time has ran out
-    if(seconds == 0){
+    if(timeroff)
+    {
+        // freeze timer when results called
+    }
+    else if(seconds == 0){
         // message and provide some way to restart
         wxMessageDialog *timesUpMess = new wxMessageDialog(NULL, 
         wxT("Your Time is Up!"), wxT("Timer"), wxOK);
@@ -329,7 +326,8 @@ void ConjugateFrame::OnTimer(wxTimerEvent &event)
 
 void ConjugateFrame::SetupNext()
 {
-    praticedWords.push_back(m_pGermanWord.release());
+    std::shared_ptr<GermanWord> sharedGermanWord = std::move(m_pGermanWord);
+    praticedWords.push_back(sharedGermanWord);
     m_pGermanWord = m_pXmlHandle->getNextWord(false);
 
     if(m_pGermanWord == nullptr)
@@ -414,14 +412,16 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
     } else if(results)
     {
         // call results page
-        ResultsFrame *resultsFrame = new ResultsFrame( wxT("Results Page"), 100, 100, 400, 300, praticedWords);
+        ResultsFrame *resultsFrame = new ResultsFrame( wxT("Results Page"), this->GetPosition(), 150, praticedWords.size() * 60, praticedWords);
         resultsFrame->Show(true);
         resultsFrame->Raise();
         resultsFrame->SetFocus();
+
+        timeroff = true;
   
 
         //hide conjugate frame
-        this->Show(false);
+        //this->Show(false);
 
     } else if(m_pXmlHandle != nullptr){
         std::string formattedEntryList[11];
@@ -434,6 +434,8 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
             formattedEntryList[i] = wxstr.ToStdString();
 
         }
+
+        m_pGermanWord->generateErrorMask(formattedEntryList);
 
         if(m_pGermanWord->checkIfAllInputCorrect(formattedEntryList)) 
         {

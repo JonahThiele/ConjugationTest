@@ -48,12 +48,13 @@ class ConjugateFrame : public wxFrame
         std::unique_ptr<GermanWord> m_pGermanWord = nullptr;
 
         //finished GermanWords 
-        std::vector<GermanWord*> praticedWords;
+        std::vector<std::shared_ptr<GermanWord>> praticedWords;
 
         //timer control
         wxTimer *m_pTimer;
         wxStaticText *m_pTimerText;
         int seconds = 240;
+        bool timeroff = false;
 
         //description
 

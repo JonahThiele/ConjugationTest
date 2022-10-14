@@ -2,12 +2,13 @@
 #define _INCORWORDFRAME_HPP
 
 #include <vector>
+#include <memory>
 #include "GermanWord.hpp"
 
 class IncorWordFrame : public wxFrame
 {
     public:
-        IncorWordFrame(const wxChar *title, int xpos, int ypos, int width, int height, GermanWord *germanWord);
+        IncorWordFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::shared_ptr<GermanWord> word);
 
         ~IncorWordFrame(){};
     protected:
@@ -25,9 +26,25 @@ class IncorWordFrame : public wxFrame
         //end and return button 
         wxButton *m_pBackButton;
 
-        GermanWord *m_pGermanWord;
+        std::shared_ptr<GermanWord> germanWord_up_{};
 
-        wxString formList[10];
+        wxString formList[11];
+
+        wxStaticText * m_pdescriptionText;
+        wxStaticText * m_pbaseFormText;
+        wxStaticText * m_pichFormText;
+        wxStaticText * m_pwirFormText;
+        wxStaticText * m_pduFormText;
+        wxStaticText * m_pihrFormText;
+        wxStaticText * m_perFormText;
+        wxStaticText * m_psieTheyFormText;
+        wxStaticText * m_psieHerFormText;
+        wxStaticText * m_psieFormalFormText;
+        wxStaticText * m_pesFormText;
+
+        std::vector<wxStaticText*> labelList = { m_pdescriptionText, m_pbaseFormText, m_pichFormText, m_pwirFormText,
+                                                m_pduFormText, m_pihrFormText, m_perFormText, m_psieTheyFormText,
+                                                m_psieHerFormText, m_psieFormalFormText, m_pesFormText};
 
 };
 

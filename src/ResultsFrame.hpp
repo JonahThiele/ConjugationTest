@@ -2,13 +2,14 @@
 #define _RESULTSFRAME_HPP
 
 #include <vector>
+#include <memory>
 #include "GermanWord.hpp"
 #include "IncorWordFrame.hpp"
 
 class ResultsFrame : public wxFrame
 {
     public:
-        ResultsFrame(const wxChar *title, int xpos, int ypos, int width, int height, std::vector<GermanWord*> words);
+        ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::vector<std::shared_ptr<GermanWord>> words);
 
         ~ResultsFrame(){};
     protected:
@@ -24,9 +25,9 @@ class ResultsFrame : public wxFrame
     
         std::vector<wxButton*> ResultWordList;
 
-        std::vector<GermanWord*> finishedWords;
+        std::vector<std::shared_ptr<GermanWord>> finishedWords;
 
-        const int buttonOffset = 45;
+        const int buttonOffset = 30;
         
    
 };

@@ -2,6 +2,7 @@
 <Root>
     
     <Word>
+        <Description>verb to run/jog</Description>
         <Base>joggen</Base>
         <Ich>jogge</Ich>
         <Wir>joggen</Wir>
@@ -14,6 +15,7 @@
         <Es>joggt</Es>
     </Word>
     <Word>
+        <Description>verb to have</Description>
         <Base>haben</Base>
         <Ich>habe</Ich>
         <Wir>haben</Wir>
@@ -26,6 +28,7 @@
         <Es>hat</Es>
     </Word>
     <Word>
+        <Description>verb to be</Description>
         <Base>sein</Base>
         <Ich>bin</Ich>
         <Wir>sind</Wir>

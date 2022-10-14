@@ -21,7 +21,18 @@ class GermanWord {
         //return name 
         wxString returnNameBaseForm() { return baseForm;}
         //return all forms 
-        wxString * returnAllForms(){ return checkList;}
+        std::vector<wxString> returnAllForms(){
+            std::vector<wxString> Forms;
+            for(int i = 0; i < 11; i++)
+            {
+                wxString wxStr = checkList[i];
+                Forms.push_back(wxStr); 
+            }
+            return Forms;
+        }
+        void generateErrorMask(std::string InputForms[]);
+
+        std::vector<bool> returnErrorMask(){ return errorMask;}
 
         wxString returnDescription(){ return description;}
 
@@ -39,6 +50,7 @@ class GermanWord {
         wxString sieFormalForm;
         wxString ihrForm;
         wxString checkList[11];
+        std::vector<bool> errorMask;
 
 };
 

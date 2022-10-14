@@ -45,13 +45,26 @@ bool GermanWord::checkIfAllInputCorrect(std::string inputList[])
 
 }
 
+void GermanWord::generateErrorMask(std::string inputList[])
+{
+    for(int i = 0; i < 10; i++)
+    {
+        if(inputList[i].compare(checkList[i + 1]))
+        {
+           errorMask.push_back(true); 
+        }else{
+           errorMask.push_back(false);
+        }
+    }
+}
+
 std::vector<std::string> GermanWord::returnIncorrectForms(std::string inputList[])
 {
     std::vector<std::string> incorrectList;
-    for(int i = 0; i < 10; i++)
+    for(int i = 1; i < 11; i++)
     {
-        if(inputList[i] != checkList[i + 1]){
-            incorrectList.push_back(inputList[i]);
+        if(inputList[i - 1] != checkList[i]){
+            incorrectList.push_back(inputList[i-1]);
         }
     }
     return incorrectList;
@@ -60,10 +73,10 @@ std::vector<std::string> GermanWord::returnIncorrectForms(std::string inputList[
 std::vector<std::string> GermanWord::returnCorrectForms(std::string inputList[])
 {
     std::vector<std::string> incorrectList;
-    for(int i = 0; i < 10; i++)
+    for(int i = 1; i < 10; i++)
     {
-        if(inputList[i] == checkList[i + 1]){
-            incorrectList.push_back(inputList[i]);
+        if(inputList[i - 1] == checkList[i]){
+            incorrectList.push_back(inputList[i-1]);
         }
     }
     return incorrectList;
