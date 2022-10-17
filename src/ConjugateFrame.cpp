@@ -168,6 +168,8 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
         m_pFileMenu->Append(wxID_OPEN, _T("&Open"), _T("Opens an existing file"));
         m_pFileMenu->Append(wxID_SAVE, _T("&Save"), _T("Saves to new file"));
         m_pFileMenu->Append(14, _T("&Append"), _T("Appends to existing file"));
+        m_pFileMenu->Append(15, _T("&Set Timer"), _T("Changes timer time"));
+        m_pFileMenu->Append(16, _T("&Disable Timer"), _T("Disables Timer"));
         m_pFileMenu->AppendSeparator();
         m_pFileMenu->Append(wxID_EXIT, _T("&Quit"), _T("Quit the application"));
         m_pMenuBar->Append(m_pFileMenu, _T("&File"));
@@ -182,12 +184,12 @@ ConjugateFrame::ConjugateFrame(const wxChar *title, int xpos, int ypos, int widt
 
     }
 
-//convert from macro to binding events due to undefined references 
-//ex: warning: creating DT_TEXTREL in a PIE, undefined reference to `vtable for ConjugateFrame'
 BEGIN_EVENT_TABLE(ConjugateFrame, wxFrame)
     EVT_MENU(wxID_OPEN, ConjugateFrame::OnMenuFileOpen)
     EVT_MENU(wxID_SAVE, ConjugateFrame::OnMenuFileSave) 
-    EVT_MENU(wxID_ANY, ConjugateFrame::OnMenuFileAppend)
+    EVT_MENU(15, ConjugateFrame::OnMenuEditTimer)
+    EVT_MENU(16, ConjugateFrame::OnMenuDisableTimer)
+    EVT_MENU(14, ConjugateFrame::OnMenuFileAppend)
     EVT_MENU(wxID_EXIT, ConjugateFrame::OnMenuFileQuit)
     EVT_MENU(wxID_ABOUT, ConjugateFrame::OnMenuHelpAbout)
     EVT_TIMER(wxEVT_TIMER, ConjugateFrame::OnTimer)
@@ -214,13 +216,13 @@ void ConjugateFrame::OnMenuFileOpen(wxCommandEvent &event)
         //grab first german word pass true bc its the first word
         m_pGermanWord = std::make_unique<GermanWord>(*m_pXmlHandle->getNextWord(true));
 
-        inputBoxList[0]->SetDefaultStyle(wxTextAttr(wxTE_READONLY));
+        //inputBoxList[0]->SetDefaultStyle(wxTextAttr(wxTE_READONLY));
         wxString description = m_pGermanWord->returnDescription();
         *inputBoxList[0] << description;
 
         goNext = true;
         results = false;
-        m_pSubmitButton->SetLabel(wxT("Submit"));
+        m_pSubmitButton->SetLabel(wxT("Clear"));
         praticedWords.clear();
 
     }
@@ -281,6 +283,70 @@ void ConjugateFrame::OnMenuFileAppend(wxCommandEvent &event)
     AppendDialog->Close();
 }
 
+void ConjugateFrame::OnMenuEditTimer(wxCommandEvent &event)
+{
+    wxTextEntryDialog *editTime = new wxTextEntryDialog(this, wxT("enter time in 00:00 format, must be 5 chars"));
+    if (editTime->ShowModal() == wxID_OK)
+    {
+       wxString inputTime = editTime->GetValue();
+       if(inputTime.ToStdString().length() == 5)
+       {
+            int userMinutes, userSeconds;
+            //grab minutes
+            if(inputTime.ToStdString().substr(0, 1) == "0")
+            {
+                userMinutes = std::stoi(inputTime.ToStdString().substr(1,1));
+            }else {
+                userMinutes = std::stoi(inputTime.ToStdString().substr(0,2));
+            }
+
+            //grab seconds
+            if(inputTime.ToStdString().substr(3, 1) == "0")
+            {
+                userSeconds = std::stoi(inputTime.ToStdString().substr(4,1));
+            }else {
+                userSeconds = std::stoi(inputTime.ToStdString().substr(3,2));
+            }
+
+            seconds = (userMinutes * 60) + userSeconds;
+            totalTime = seconds;
+
+       } else {
+         wxMessageDialog *incorFormatMs = new wxMessageDialog(NULL, wxT("Incorrectly formated time, re-enter please"), wxT("Timer"), wxOK);
+        incorFormatMs->ShowModal();
+       }
+       
+
+    }
+    editTime->Close();
+}
+
+void ConjugateFrame::OnMenuDisableTimer(wxCommandEvent &event)
+{
+    wxArrayString choices;
+    choices.Add(wxT("Disable Timer"));
+    choices.Add(wxT("Enable Timer"));
+
+    wxSingleChoiceDialog *disableTime = new wxSingleChoiceDialog(this, wxT("Disable Timer?"),wxT(""),choices);
+    disableTime->SetSelection(1);
+    if ( disableTime->ShowModal() == wxID_OK)
+    {
+       if(disableTime->GetSelection())
+       {
+            timeroff = false;
+            seconds = 240;
+            totalTime = 240;
+       } else {
+            timeroff = true;
+            seconds = -1;
+            totalTime = -1;
+       }
+
+    }
+    disableTime->Close();
+
+}
+
 void ConjugateFrame::OnMenuFileQuit(wxCommandEvent &event)
 {
     Close(false);
@@ -310,7 +376,7 @@ void ConjugateFrame::OnTimer(wxTimerEvent &event)
         m_pSubmitButton->SetLabel(wxT("Results"));
 
         //reset seconds
-        seconds = 240;
+        seconds = totalTime;
 
     } else {
         //change label to show time to user
@@ -388,7 +454,7 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         }
 
     }
-    else if(goNext)
+    else if(goNext && !firstWord )
     {
         //set all of the inputboxes back to black
         for(int i =0; i < 11; i++)
@@ -412,7 +478,8 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
     } else if(results)
     {
         // call results page
-        ResultsFrame *resultsFrame = new ResultsFrame( wxT("Results Page"), this->GetPosition(), 150, praticedWords.size() * 60, praticedWords);
+    
+        ResultsFrame *resultsFrame = new ResultsFrame( wxT("Results Page"), this->GetPosition(), 150, praticedWords.size() * 60, praticedWords, totalTime - seconds);
         resultsFrame->Show(true);
         resultsFrame->Raise();
         resultsFrame->SetFocus();
@@ -424,14 +491,15 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
         //this->Show(false);
 
     } else if(m_pXmlHandle != nullptr){
-        std::string formattedEntryList[11];
+        firstWord = false;
+        std::string formattedEntryList[10];
         for(int i = 1; i < 11; i++)
         {
             //std::string str9 = m_pBaseWordCtrl->GetValue().ToStdString();
            //std::cout << "str9:" << str9 << "\n";
           
             wxString wxstr = inputBoxList[i]->GetValue();
-            formattedEntryList[i] = wxstr.ToStdString();
+            formattedEntryList[i-1] = wxstr.ToStdString();
 
         }
 
@@ -447,7 +515,7 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
             {
                 inputBoxList[i]->Clear();
                 inputBoxList[i]->SetForegroundColour( wxColour(*wxGREEN));
-                std::string userForm = formattedEntryList[i];
+                std::string userForm = formattedEntryList[i-1];
                 *inputBoxList[i] << userForm.c_str(); 
             }
 
@@ -461,12 +529,12 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
             {
                 for(int a =0; a <  incorrectForms.size(); a++)
                 {
-                    if(formattedEntryList[i] == incorrectForms[a])
+                    if(formattedEntryList[i -1] == incorrectForms[a])
                     {
                         inputBoxList[i]->Clear();
                         inputBoxList[i]->SetForegroundColour( wxColour(*wxRED));
 
-                        std::string userForm = formattedEntryList[i];
+                        std::string userForm = formattedEntryList[i-1];
 
                         *inputBoxList[i] << userForm.c_str();
             
@@ -478,11 +546,11 @@ void ConjugateFrame::OnSubmit(wxCommandEvent &event)
                 }
                 for(int b = 0; b < correctForms.size(); b++)
                 {
-                    if(formattedEntryList[i] == correctForms[b])
+                    if(formattedEntryList[i -1] == correctForms[b])
                     {
                         inputBoxList[i]->Clear();
                         inputBoxList[i]->SetForegroundColour( wxColour(*wxGREEN));
-                        std::string userForm = formattedEntryList[i];
+                        std::string userForm = formattedEntryList[i -1];
                         *inputBoxList[i] << userForm.c_str(); 
                     }
                 }

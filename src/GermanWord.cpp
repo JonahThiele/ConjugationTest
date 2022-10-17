@@ -34,10 +34,10 @@ GermanWord::GermanWord(std::vector<wxString> FormsFromXml)
 
 bool GermanWord::checkIfAllInputCorrect(std::string inputList[]) 
 {
-    for(int i = 0; i < 10; i++)
+    for(int i = 1; i < 11; i++)
     {
         
-        if(inputList[i].compare(checkList[i + 1]))
+        if(inputList[i-1].compare(checkList[i]))
             return false;
     }
 
@@ -72,14 +72,14 @@ std::vector<std::string> GermanWord::returnIncorrectForms(std::string inputList[
 
 std::vector<std::string> GermanWord::returnCorrectForms(std::string inputList[])
 {
-    std::vector<std::string> incorrectList;
-    for(int i = 1; i < 10; i++)
+    std::vector<std::string> correctList;
+    for(int i = 1; i < 11; i++)
     {
         if(inputList[i - 1] == checkList[i]){
-            incorrectList.push_back(inputList[i-1]);
+            correctList.push_back(inputList[i-1]);
         }
     }
-    return incorrectList;
+    return correctList;
 
 }
 

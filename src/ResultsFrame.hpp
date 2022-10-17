@@ -9,7 +9,7 @@
 class ResultsFrame : public wxFrame
 {
     public:
-        ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::vector<std::shared_ptr<GermanWord>> words);
+        ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::vector<std::shared_ptr<GermanWord>> words, int time);
 
         ~ResultsFrame(){};
     protected:

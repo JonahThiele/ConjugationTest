@@ -31,6 +31,10 @@ class ConjugateFrame : public wxFrame
         void OnMenuHelpAbout(wxCommandEvent &event);
         //process appending to xml file
         void OnMenuFileAppend(wxCommandEvent &event);
+        //processes changing timer time
+        void OnMenuEditTimer(wxCommandEvent &event);
+        //processes get rid of timer 
+        void OnMenuDisableTimer(wxCommandEvent &event);
         /** Checks user input in text boxes */
         void OnSubmit(wxCommandEvent &event);
         /** Times exercise */
@@ -54,7 +58,9 @@ class ConjugateFrame : public wxFrame
         wxTimer *m_pTimer;
         wxStaticText *m_pTimerText;
         int seconds = 240;
+        int totalTime = 240;
         bool timeroff = false;
+        
 
         //description
 
@@ -69,6 +75,7 @@ class ConjugateFrame : public wxFrame
         bool goNext = false;
         bool results = false;
         bool saveFileOpen = false;
+        bool firstWord = true;
 
         wxTextCtrl *m_pDescriptionText;
         wxTextCtrl *m_pBaseWordCtrl;

@@ -6,7 +6,7 @@
 
 #include "ResultsFrame.hpp"
 
-ResultsFrame::ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::vector<std::shared_ptr<GermanWord>> words)
+ResultsFrame::ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int height, std::vector<std::shared_ptr<GermanWord>> words,int time)
     : wxFrame((wxFrame *) NULL, -1, title, wpoint, wxSize(width, height))
     {
         finishedWords = words;
@@ -15,6 +15,29 @@ ResultsFrame::ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int h
 
         this->SetMinSize(wxSize(150, words.size() * 60));
 
+        if(time)
+        {
+            m_pBoxSizer->Add(
+                new wxStaticText(this, wxID_ANY, wxT("Completed in"), wxDefaultPosition, wxDefaultSize),
+                wxSizerFlags().Center().Expand().Shaped()
+            );
+
+            std::string formatStr = (time % 60 > 9) ? ":" : ":0";
+            std::string str = std::to_string(time / 60) + formatStr + std::to_string(time % 60);
+            wxString Wtime(str);
+
+            m_pBoxSizer->Add(
+                new wxStaticText(this, wxID_ANY, Wtime, wxDefaultPosition, wxDefaultSize),
+                wxSizerFlags().Center().Expand().Shaped()
+            );
+ 
+        } else {
+            m_pBoxSizer->Add(
+                new wxStaticText(this, wxID_ANY, wxT("time ran out"), wxDefaultPosition, wxDefaultSize),
+                wxSizerFlags().Center().Expand().Shaped()
+            );
+        }
+    
         for(int i = 0; i < words.size(); i++)
         {
             const int buttonID = buttonOffset + i;
@@ -26,6 +49,7 @@ ResultsFrame::ResultsFrame(const wxChar *title, wxPoint wpoint, int width, int h
             wxSizerFlags().Center().Expand().Shaped()
             );
         }
+
 
        Bind(wxEVT_BUTTON, &ResultsFrame::OnButtonClick, this, buttonOffset, buttonOffset + words.size());
 
