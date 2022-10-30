@@ -1,2 +1,3 @@
-g++ widgetTest.cpp `wx-config --cxxflags --libs` -o widgetTest
-`wx-config --cxx --cxxflags` -o myapp *.cpp `wx-config --libs`
+command to compile src , with aid of wx-config
+
+g++ *.cpp `wx-config --cxxflags --libs` -o widget
